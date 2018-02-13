@@ -1,0 +1,40 @@
+## Compilation of docker container definitions usefull for local development and deployment
+version: "3.2"
+
+services:
+  nginx:
+    container_name: nginx
+    image: jwilder/nginx-proxy:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      DEFAULT_HOST: portainer.docker
+    network_mode: bridge
+    restart: always
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    volumes:
+      - ~/.portainer/storage/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      VIRTUAL_HOST: portainer.docker
+    network_mode: bridge
+    restart: always
+    depends_on:
+      - nginx
+
+  ssh-agent:
+    container_name: ssh-agent
+    image: nardeas/ssh-agent
+    network_mode: none
+    restart: always
+    volumes:
+        - ssh-agent-sock-volume:/.ssh-agent
+
+volumes:
+  ssh-agent-sock-volume:
