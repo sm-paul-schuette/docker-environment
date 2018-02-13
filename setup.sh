@@ -34,6 +34,8 @@ fi
 
 printf "Starting containers\n"
 docker-compose up -d
-printf "\n\n"
-printf "Adding your key (${DOCKER_SSH_AGENT_KEY}) to ssh-agent\n"
-docker run --rm -v ${HOME}/.ssh:/.ssh:ro --volumes-from=ssh-agent -it nardeas/ssh-agent ssh-add /.ssh/${DOCKER_SSH_AGENT_KEY}
+printf "\n"
+printf "Adding your key (~./.ssh/${DOCKER_SSH_AGENT_KEY}) to ssh-agent\n"
+docker run --rm -v ${HOME}/.ssh:/.ssh:ro --volumes-from=ssh-agent -it nardeas/ssh-agent ssh-add .ssh/${DOCKER_SSH_AGENT_KEY}
+printf "Following keys are now present:\n"
+docker run --rm --volumes-from ssh-agent nardeas/ssh-agent ssh-add -L
