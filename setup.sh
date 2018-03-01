@@ -35,7 +35,11 @@ fi
 printf "Starting containers\n"
 docker-compose up -d
 printf "\n"
-printf "Adding your key (~./.ssh/${DOCKER_SSH_AGENT_KEY}) to ssh-agent\n"
+if [ -f ~/.ssh/${DOCKER_SSH_AGENT_KEY} ]; then
+  printf "Adding your key (~/.ssh/${DOCKER_SSH_AGENT_KEY}) to ssh-agent\n"
+else
+  printf "Private key '~/.ssh/${DOCKER_SSH_AGENT_KEY}' not found. Is \$DOCKER_SSH_AGENT_KEY set?\n"
+fi
 docker run --rm -v ${HOME}/.ssh:/.ssh:ro --volumes-from=ssh-agent -it nardeas/ssh-agent ssh-add .ssh/${DOCKER_SSH_AGENT_KEY}
 printf "Following keys are now present:\n"
 docker run --rm --volumes-from ssh-agent nardeas/ssh-agent ssh-add -L

@@ -1,5 +1,5 @@
 ## Compilation of docker container definitions usefull for local development and deployment
-version: "3.2"
+version: "3.5"
 
 services:
   nginx:
@@ -12,7 +12,8 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     environment:
       DEFAULT_HOST: portainer.docker
-    network_mode: bridge
+    networks:
+      - nginx_proxy
     restart: always
 
   portainer:
@@ -23,7 +24,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       VIRTUAL_HOST: portainer.docker
-    network_mode: bridge
+    networks:
+      - nginx_proxy
     restart: always
     depends_on:
       - nginx
@@ -38,3 +40,7 @@ services:
 
 volumes:
   ssh-agent-sock-volume:
+
+networks:
+  nginx_proxy:
+    name: nginx_proxy
