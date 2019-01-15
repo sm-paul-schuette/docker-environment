@@ -33,13 +33,17 @@ if [[ ! -f "docker-compose.yml" ]]; then
   fi
 fi
 
+if [[ ! -f $(pwd)/.env ]]; then
+  echo -n COMPOSE_PROJECT_NAME=php_backend > .env
+fi
+
 printf "Starting containers\n"
 docker-compose up -d
 printf "\n"
 if [ -f ~/.ssh/${DOCKER_SSH_AGENT_KEY} ]; then
   printf "Adding your key (~/.ssh/${DOCKER_SSH_AGENT_KEY}) to ssh-agent\n"
 else
-  printf "Private key '~/.ssh/${DOCKER_SSH_AGENT_KEY}' not found. Is \$DOCKER_SSH_AGENT_KEY set?\n"
+  printf "Private key '~/.ssh/${DOCKER_SSH_AGENT_KEY}' not found. Is \$DOCKER_SSH_AGENT_KEY set correctly (\$DOCKER_SSH_AGENT_KEY=${DOCKER_SSH_AGENT_KEY})?\n"
 fi
 docker run --rm -v ${HOME}/.ssh:/.ssh:ro --volumes-from=ssh-agent -it nardeas/ssh-agent ssh-add .ssh/${DOCKER_SSH_AGENT_KEY}
 printf "Following keys are now present:\n"
