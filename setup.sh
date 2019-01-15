@@ -9,6 +9,7 @@ show_help() {
   printf "  * Portainer\n"
   printf "  * ssh-agent\n"
   printf "  * nginx-proxy\n"
+  printf "  * dnsmasq\n"
   printf "\n"
   printf "and adds the ssh-key defined in \$DOCKER_SSH_AGENT_KEY (${DOCKER_SSH_AGENT_KEY}) to the ssh-agent"
   printf "\n\n"
@@ -43,3 +44,10 @@ fi
 docker run --rm -v ${HOME}/.ssh:/.ssh:ro --volumes-from=ssh-agent -it nardeas/ssh-agent ssh-add .ssh/${DOCKER_SSH_AGENT_KEY}
 printf "Following keys are now present:\n"
 docker run --rm --volumes-from ssh-agent nardeas/ssh-agent ssh-add -L
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+   echo ""
+   echo Installing custom resolver to /etc/resolver for ".docker" domain
+   echo ""
+  ./dnsmasq/osx_add_resolver.sh
+fi

@@ -1,4 +1,4 @@
-## Compilation of docker container definitions usefull for local development and deployment
+## Compilation of docker container definitions useful for local development and deployment
 version: "3.5"
 
 services:
@@ -37,6 +37,26 @@ services:
     restart: always
     volumes:
         - ssh-agent-sock-volume:/.ssh-agent
+
+  dnsmasq:
+    container_name: dnsmasq
+    image: jpillora/dnsmasq
+    ports:
+      - "53:53/udp"
+    environment:
+      VIRTUAL_HOST: dns.docker
+      VIRTUAL_PORT: 8080
+      HTTP_PASS:
+      HTTP_USER:
+    volumes:
+      - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+    networks:
+      - nginx_proxy
+    expose:
+      - 8080
+    depends_on:
+      - nginx
+    restart: always
 
 volumes:
   ssh-agent-sock-volume:
